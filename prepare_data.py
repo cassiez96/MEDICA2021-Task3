@@ -6,8 +6,8 @@ import pdb
 import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--json_dir', type=str, required=True, help='Directory for json data (MEDIQA21 task 3)')
-parser.add_argument('--jsonl_dir', type=str, required=True, help='Directory for outputting processed jsonl data')
+parser.add_argument('--input_json_path', type=str, required=True, help='Path for input json data (MEDIQA21 task 3)')
+parser.add_argument('--output_jsonl_path', type=str, required=True, help='Path for outputting processed jsonl data')
 args = parser.parse_args()
 opt = vars(args)
 
@@ -16,9 +16,9 @@ ENTRIES_TO_EXTRACT = ["findings", "impression", "background"]
 # read json, tokenize, write to jsonl
 def tokenize():
     nlp = stanza.Pipeline(lang='en', processors='tokenize', tokenize_no_ssplit=True)
-    outfile = open(opt['jsonl_dir'], "w")
+    outfile = open(opt['output_jsonl_path'], "w")
     length_statistics = defaultdict(lambda: defaultdict(int)) # key: entry_key (eg. findings), value: {length of entry: number of times this length ocurred}
-    with open(opt['json_dir'], 'r') as j:
+    with open(opt['input_json_path'], 'r') as j:
         reports = json.loads(j.read())
         print(f"Number of reports: {len(reports)}")
         for i, report in enumerate(reports):
@@ -31,6 +31,7 @@ def tokenize():
                 entry[entry_key] = tokenize_helper(nlp, report, entry_key, length_statistics)
             json.dump(entry, outfile)
             outfile.write("\n")
+    outfile.close()
     plot_histogram(length_statistics)
 
 # input: a report entry (eg. findings) as a string
@@ -41,7 +42,7 @@ def tokenize_helper(nlp, report, entry_key, length_statistics):
     for sentence in doc.sentences:
         ret += [token.text for token in sentence.tokens]
     length_statistics[entry_key][len(ret)] += 1
-    return ret            
+    return ret
 
 def plot_histogram(length_statistics):
     for key in length_statistics:
