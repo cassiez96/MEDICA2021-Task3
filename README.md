@@ -20,7 +20,8 @@ It also counts the lengths of the 3 sections, and produces a histograms of secti
 
 ![example histogram](https://i.imgur.com/kT1RnVr.png)
 
-# TODO: DataLoader
-Saving the tokenized data as `jsonl` format allows us to easily use the existing DataLoader [here](https://github.com/yuhaozhang/summarize-radiology-findings/blob/master/data/loader.py), which conducts optinal further preprocessing such convert tokens to lower cases.
+# Step 3: load pretrained GloVe vectors and prepare vocabulary
+Load GloVe word vectors that are pretrained on 4.5 million Stanford radiology reports and prepare vocabulary for train, test and dev dataset (stored in jsonl format) according to the instructions [here](https://github.com/yuhaozhang/summarize-radiology-findings#preparation). The scripts are included in this repository.
 
-TODO: modify the existing DataLoader and use in this repo
+# Step 4: load data with DataLoader
+The data loader located in `data/loader.py` was modified from the [Learning to Summarize Radiology Findings's data loader](https://github.com/yuhaozhang/summarize-radiology-findings/blob/master/data/loader.py). For each report with corresponding x-ray images, it first preprocesses the report by converting raw tokens in the findings, impression, and background sections to vocabulary indices, then it combines the preprocessed report with each of its x-ray images (eg. if 1 report has 2 images, then DataLoader creates 2 samples with same report but different images.)
