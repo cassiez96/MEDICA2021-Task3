@@ -50,5 +50,6 @@ This will write vocabulary and word vectors as a numpy matrix into the dir `data
 
 
 ### Step 4: load data with DataLoader
-The data loader located in `data/loader.py` was modified from the [Learning to Summarize Radiology Findings's data loader](https://github.com/yuhaozhang/summarize-radiology-findings/blob/master/data/loader.py). For each report with corresponding x-ray images, it first preprocesses the report by converting raw tokens in the findings, impression, and background sections to vocabulary indices, then it combines the preprocessed report with each of its x-ray images (eg. if 1 report has 2 images, then DataLoader creates 2 samples with same report but different images.)
+The data loader located in `loader.py` was modified from the [Learning to Summarize Radiology Findings's data loader](https://github.com/yuhaozhang/summarize-radiology-findings/blob/master/data/loader.py). For each report with corresponding x-ray images, it first preprocesses the report by converting raw tokens in the findings, impression, and background sections to vocabulary indices, then it combines the preprocessed report with each of its x-ray images (eg. if 1 report has 2 images, then DataLoader creates 2 samples with same report but different images.)
 
+To test the loader, first change `DATASET_PATH` and `XRAY_IMAGES_PATH` variables in `loader.py`, then run `python3 loader.py`. This will call `dataloader.__getitem(i)__` for all indices `i` and print the results.
