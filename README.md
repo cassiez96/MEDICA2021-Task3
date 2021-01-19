@@ -1,9 +1,14 @@
 # MEDICA2021-Task3
 
-# Step 1: download data and split train/dev 
-Follow steps in [MEDICA2021 task 3 README](https://github.com/abachaa/MEDIQA2021/tree/main/Task3) to download and generate train/dev summarization data. The resulting train and dev data are stored in json format.
+## Required packages:
+- [pytorch](https://pytorch.org/get-started/locally/)
+- [stanza](https://stanfordnlp.github.io/stanza/) (Stanford CoreNLP library for Python)
 
-Each example (a report) consists of 5 sections, all stored as free text format:
+## Getting started
+### Step 1: download data and split train/dev datasets
+Follow steps in [MEDICA2021 task 3 README](https://github.com/abachaa/MEDIQA2021/tree/main/Task3) to download the radiology reports and generate train/dev datasets. The resulting train and dev data are stored in `json` format.
+
+Each example (a report) consists of 5 sections, all stored as free text strings:
 
 - subject_id
 - study_id
@@ -11,14 +16,22 @@ Each example (a report) consists of 5 sections, all stored as free text format:
 - findings
 - impression
 
-We are trying to summarize the impression section from background and findings.
+The model tries to summarize the findings section (with extra information from background section), and the impression section is the target summarization we are trying to generate.
 
-# Step 2: tokenize the data and generate sentence length histogram
-`prepare_data.py` takes the extracted `json` data, tokenize the background, findings and impression section using Stanford CoreNLP tokenizer (package `stanza` for Python), and output to a `jsonl` format.
+# Step 2: tokenize the data and generate histograms
+`prepare_data.py` takes the data from step 1, tokenize the background, findings and impression section using Stanford CoreNLP tokenizer (package `stanza`), and output to a `jsonl` format file.
 
-It also counts the lengths of the 3 sections, and produces a histograms of section length for each section after tokenizing all data. Example figure produced for 1000 reports:
+It also counts the lengths of the 3 sections, and produces and saves a histogram of section length for each section after tokenizing all data. Example figure produced for 1000 reports:
 
 ![example histogram](https://i.imgur.com/kT1RnVr.png)
+
+Run the script with the following command (assume `json` file from step 1's path is stored in `$INPUT_JSON_FILE_PATH`):
+
+```
+python3 prepare_data.py --input_json_path $INPUT_JSON_FILE_PATH --output_jsonl_path dataset/$DATASET_PATH/$FILE_NAME --histogram_dir $HISTOGRAM_DIRECTORY_PATH
+```
+
+The processed `jsonl` file will be stored at `dataset/$DATASET_PATH/$FILE_NAME`, and 3 histograms (one for each section) will be stored at directory `$HISTOGRAM_DIRECTORY_PATH`.
 
 # Step 3: load pretrained GloVe vectors and prepare vocabulary
 Load GloVe word vectors that are pretrained on 4.5 million Stanford radiology reports and prepare vocabulary for train, test and dev dataset (stored in jsonl format) according to the instructions [here](https://github.com/yuhaozhang/summarize-radiology-findings#preparation). The scripts are included in this repository.
