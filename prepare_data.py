@@ -3,33 +3,53 @@ import argparse
 import json
 from collections import defaultdict
 import pdb
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
+import os
+from pathlib import Path
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--input_json_path', type=str, required=True, help='Path for input json data (MEDIQA21 task 3)')
 parser.add_argument('--output_jsonl_path', type=str, required=True, help='Path for outputting processed jsonl data')
+parser.add_argument('--histogram_dir', type=str, required=True, help='Path for outputting report section length histogram')
 args = parser.parse_args()
 opt = vars(args)
 
-ENTRIES_TO_EXTRACT = ["findings", "impression", "background"]
+ENTRIES_TO_TOKENIZE = ["findings", "impression", "background"]
 
 # read json, tokenize, write to jsonl
 def tokenize():
     nlp = stanza.Pipeline(lang='en', processors='tokenize', tokenize_no_ssplit=True)
-    outfile = open(opt['output_jsonl_path'], "w")
+    outfile_path = opt['output_jsonl_path']
+    
+    error = False
+    if not outfile_path.endswith("jsonl"):
+        print("Error! --output_jsonl_path needs to be jsonl format")
+        error = True
+    elif not outfile_path.startswith("dataset/"):
+        print("Error! --output_jsonl_path needs to be a file in dataset folder (for later processing)")
+        error = True
+    if error:
+        exit()
+
+    # create output folder if not exist
+    outfile_dir = "/".join(outfile_path.split("/")[:-1])
+    Path(outfile_dir).mkdir(parents=True, exist_ok=True)
+
+    outfile = open(outfile_path, "w")
     length_statistics = defaultdict(lambda: defaultdict(int)) # key: entry_key (eg. findings), value: {length of entry: number of times this length ocurred}
     with open(opt['input_json_path'], 'r') as j:
         reports = json.loads(j.read())
         print(f"Number of reports: {len(reports)}")
         for i, report in enumerate(reports):
-            # TODO: remove early termination
-            if (i+1) % 1000 == 0:
+            if (i+1) % 100 == 0:
                 # print(f"Processed {i} reports", flush=True)
                 break
-            entry = {}
-            for entry_key in ENTRIES_TO_EXTRACT:
-                entry[entry_key] = tokenize_helper(nlp, report, entry_key, length_statistics)
-            json.dump(entry, outfile)
+            # modify report and write into jsonl
+            for entry_key in ENTRIES_TO_TOKENIZE:
+                report[entry_key] = tokenize_helper(nlp, report, entry_key, length_statistics)
+            json.dump(report, outfile)
             outfile.write("\n")
     outfile.close()
     plot_histogram(length_statistics)
@@ -51,7 +71,9 @@ def plot_histogram(length_statistics):
         plt.title(f"Histogram for report {key}")
         plt.xlabel('Number of tokens')
         plt.ylabel('Number of occurrences')
-        plt.show()
+        plt.savefig(os.path.join(opt['histogram_dir'], f"{key}_histogram.png"))
+        plt.clf()
+        print(f"Histogram for {key} saved.")
 
 if __name__ == "__main__":
     tokenize()

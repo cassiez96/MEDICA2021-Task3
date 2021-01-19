@@ -10,6 +10,7 @@ import os
 from PIL import Image
 import torchvision.transforms.functional as TF
 from utils import constant, helper, vocab, jsonl
+from utils.vocab import Vocab
 
 class DataLoader(object):
     """
@@ -180,3 +181,17 @@ def sort_all(batch, lens):
     unsorted_all = [lens] + [range(len(lens))] + list(batch)
     sorted_all = [list(t) for t in zip(*sorted(zip(*unsorted_all), reverse=True))]
     return sorted_all[2:], sorted_all[1]
+
+
+# Test dataloader, change DATASET_PATH and XRAY_IMAGES_PATH
+if __name__ == "__main__":
+    opt = {
+        "lower": True
+    }
+    DATASET_PATH = "out.jsonl"
+    XRAY_IMAGES_PATH = "../images"
+    vocab = Vocab("dataset/vocab/vocab.pkl", load=True)
+    dataset = DataLoader(DATASET_PATH, XRAY_IMAGES_PATH, 5, opt, vocab)
+
+    for i in range(len(dataset)):
+        print(dataset.__getitem__(i))
