@@ -10,17 +10,17 @@ parser.add_argument('--train_percent', type=int, default=80, help='% of data for
 parser.add_argument('--dev_percent', type=int, default=10, help='% of data for dev set')
 parser.add_argument('--input_dir', type=str, required=True, help='Path of the directory where unsplit data is stored')
 parser.add_argument('--output_dir', type=str, required=True, help='Path of the directory to place the split datasets')
-parser.add_argument('--filenames', nargs = '+', required=True, help = "filenames of the files need to be split (don't need directory path)")
 args = parser.parse_args()
 opt = vars(args)
 RANDOM_SEED = 100
+
+filenames = ["findings.norm.tok", "bg_and_findings.norm.tok", "impression.norm.tok", "ids"]
 
 if __name__ == "__main__":
     random.seed(RANDOM_SEED)
     train_percent = opt["train_percent"]
     dev_percent = opt["dev_percent"]
     test_percent = 100 - train_percent - dev_percent
-    filenames = opt['filenames']
     if not (1 <= train_percent < 100 and 1 <= dev_percent < 100 and train_percent+dev_percent < 100):
         print("Error: --train_percent and --dev_percent needs to be a integer in range [1, 99] and their sum must be < 100")
         exit(1)
