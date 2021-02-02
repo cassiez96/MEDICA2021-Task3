@@ -80,7 +80,7 @@ def main():
               preprocessed_images_batch.append(img)
 
             # when having a batch of 500 images or more, extract the features
-            if len(preprocessed_images_batch) >= 500:
+            if len(preprocessed_images_batch) >= 500 or (i == len(reports)-1 and preprocessed_images_batch):
                 input_tensor_batch = torch.stack(preprocessed_images_batch)
                 extracted_features = extract_features(input_tensor_batch, layer_getter)
 
@@ -141,7 +141,7 @@ def extract_features(input_tensor, layer_getter):
 def save_features(features, output_file_prefix):
     # save to file
     print(f"Writing features to npy file..")
-    output_file = open(os.path.join(opt["output_dir_features"], f"{dataset}-resnet50-avgpool.npy"), "wb")
+    output_file = open(os.path.join(opt["output_dir_features"], f"{output_file_prefix}-resnet50-avgpool.npy"), "wb")
     np.save(output_file, features)
     output_file.close()
     print(f"Done writing features for {opt['input_json_path']}")
