@@ -1,5 +1,27 @@
 # MEDIQA2021 Task 3 using nmtpytorch
 
+### jb
+Go here : https://drive.google.com/drive/u/1/folders/1zqu7i3Pm2A4kcdeLO9d1TXQYG8UaAbnQ <br/>
+Download train, dev and indiana_dev.json<br/>
+Download indiana_images.zip, put it in "indiana_images" folder<br/>
+Put mimic-cxr images in "images" folder<br/>
+Run:<br/>
+`python split_input_target.py`<br/>
+Files are created in out_nmtpytorch folder (or here https://drive.google.com/drive/u/1/folders/1ATUSX3o9vhgQuHOe18WgRobftOyz3zu0)
+
+To tokenize files (but dont do that yet), do :
+
+```
+for split in train dev indiana_dev; do
+    for mode in findings bg_and_findings impression; do
+      for llang in en; do
+        moses_scripts/lowercase.perl < out_nmtpytorch/${split}.${mode} | moses_scripts/normalize-punctuation.perl -l $llang | \
+          moses_scripts/tokenizer.perl -q -a -l $llang -threads 4 > out_nmtpytorch/${split}.${mode}.lc.norm.tok
+      done
+    done
+done
+```
+
 ## Step 1: download data and split train/dev datasets
 Follow steps in [MEDICA2021 task 3 README](https://github.com/abachaa/MEDIQA2021/tree/main/Task3) to download the radiology reports and generate train/dev datasets. The resulting train and dev data are stored in `json` format.
 
