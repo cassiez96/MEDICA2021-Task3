@@ -126,7 +126,6 @@ def write_to_file(file, text, replicate=1):
 
 
 def extract_features(input_tensor, layer_getter):
-    print(f"Extracting features for {opt['input_json_path']}")
     features = None
 
     with torch.no_grad():
