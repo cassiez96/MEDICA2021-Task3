@@ -25,28 +25,24 @@ for split in train dev indiana_dev; do
 done
 ```
 
-### Generate vocabulary
-First, download nmtpytorch: https://github.com/lium-lst/nmtpytorch
-Go to the directory `nmtpytorch/bin` and execute:
+### Tokenize data (Stanford NLP Tokenizer)
+This is the tokenizer to use
 
 ```
-chmod u+x "nmtpytorch/bin/nmtpy-build-vocab"
-cd nmtpytorch/bin
-./nmtpy-build-vocab -o out_nmtpytorch out_nmtpytorch/train.findings out_nmtpytorch/train.impression out_nmtpytorch/train.bg_and_findings
+python stanford_tokenizer.py
 ```
 
-### Install and configure dependencies for nmtpytorch (required on Google Colab)
+### nmtpytorch
+<b>On google colab do </b><br/>
 ```
-python3 -m pip install --upgrade pip
-pip install nmtpytorch
-python3 -m pip install --upgrade Pillow
-cd nmtpytorch/bin
-chmod u+x nmtpy-install-extra
-./nmtpy-install-extra
-pip3 install https://download.pytorch.org/whl/cu100/torch-1.1.0-cp36-cp36m-linux_x86_64.whl # default torch version not compatible with Google Colab GPU
+!git clone https://github.com/lium-lst/nmtpytorch && \
+cd nmtpytorch/ && python setup.py develop && \
+nmtpy-install-extra 
 ```
+<b>Create vocab</b><br/>
+`nmtpy-build-vocab -o out_nmtpytorch out_nmtpytorch/train.findings.tok`
 
-### Train nmtpytorch
+<b>Train nmtpytorch</b><br/>
 Run nmtpytorch with configuration file: `nmtpy train -C mmt-task-fd-impr-encdecinit.conf` (edit `__FILE_PREFIX__` and `__SAVE_PATH__` based on `out_nmtpytorch`'s path prefix and where to save the trained model) 
 
 
