@@ -6,7 +6,7 @@ Download train, dev and indiana_dev.json<br/>
 Download indiana_images.zip, put it in "indiana_images" folder<br/>
 Put mimic-cxr images in "images" folder<br/>
 
-### Split data (findings, background+findings, impression)
+### Split data and extract image features(findings, background+findings, impression)
 Run:<br/>
 `python split_input_target.py`<br/>
 Files are created in out_nmtpytorch folder (or here https://drive.google.com/drive/u/1/folders/1ATUSX3o9vhgQuHOe18WgRobftOyz3zu0)
@@ -47,7 +47,7 @@ pip3 install https://download.pytorch.org/whl/cu100/torch-1.1.0-cp36-cp36m-linux
 ```
 
 ### Train nmtpytorch
-Run nmtpytorch with configuration file: `nmtpy train -C mmt-task-fd-impr-encdecinit.conf`
+Run nmtpytorch with configuration file: `nmtpy train -C mmt-task-fd-impr-encdecinit.conf` (edit `__FILE_PREFIX__` and `__SAVE_PATH__` based on `out_nmtpytorch`'s path prefix and where to save the trained model) 
 
 
 
