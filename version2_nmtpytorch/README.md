@@ -35,8 +35,19 @@ cd nmtpytorch/bin
 ./nmtpy-build-vocab -o out_nmtpytorch out_nmtpytorch/train.findings out_nmtpytorch/train.impression out_nmtpytorch/train.bg_and_findings
 ```
 
-### Train nmtpytorch
+### Install and configure dependencies for nmtpytorch (required on Google Colab)
+```
+python3 -m pip install --upgrade pip
+pip install nmtpytorch
+python3 -m pip install --upgrade Pillow
+cd nmtpytorch/bin
+chmod u+x nmtpy-install-extra
+./nmtpy-install-extra
+pip3 install https://download.pytorch.org/whl/cu100/torch-1.1.0-cp36-cp36m-linux_x86_64.whl # default torch version not compatible with Google Colab GPU
+```
 
+### Train nmtpytorch
+Run nmtpytorch with configuration file: `nmtpy train -C "/content/gdrive/My Drive/nmtpytorch/mmt-task-fd-impr-encdecinit.conf"`
 
 
 
