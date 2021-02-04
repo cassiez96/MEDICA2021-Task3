@@ -18,8 +18,7 @@ Files are created in out_nmtpytorch folder (or here https://drive.google.com/dri
 ### nmtpytorch folder
 <b>On google colab do </b><br/>
 ```
-!git clone https://github.com/lium-lst/nmtpytorch && \
-cd nmtpytorch/ && python setup.py develop && \
+!cd nmtpytorch/ && python setup.py develop && \
 nmtpy-install-extra 
 ```
 <b>Create vocab</b><br/>
