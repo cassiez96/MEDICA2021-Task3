@@ -23,10 +23,16 @@ cd nmtpytorch/ && python setup.py develop && \
 nmtpy-install-extra 
 ```
 <b>Create vocab</b><br/>
-`nmtpy-build-vocab -o out_nmtpytorch out_nmtpytorch/train.findings.tok`
+
+```
+nmtpy_dir=preprocessing/out_nmtpytorch
+for file in train.findings.tok train.impression.tok  train.bg_and_findings.tok
+do
+    nmtpy-build-vocab -o ${nmtpy_dir} ${nmtpy_dir}/${file}
+done
+```
 
 <b>Train nmtpytorch</b><br/>
-Run nmtpytorch with configuration file: `nmtpy train -C mmt-task-fd-impr-encdecinit.conf` (edit `__FILE_PREFIX__` and `__SAVE_PATH__` based on `out_nmtpytorch`'s path prefix and where to save the trained model) 
-
+Run nmtpytorch with configuration file: `nmtpy train -C baseline_avgpool.conf`
 
 

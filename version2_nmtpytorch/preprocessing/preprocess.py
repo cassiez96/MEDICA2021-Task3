@@ -29,11 +29,14 @@ class Tokenizer:
 
 
 def tokenize_sentence(s):
+    if not s:
+        return ''
     doc = Tokenizer.tokenizer(s.strip())
     s = []
     for i, sentence in enumerate(doc.sentences):
         s.extend([token.text.lower() for token in sentence.tokens])
     return ' '.join(s)
+
 
 def load_images_mimic(subject_id, study_id):
     d = os.path.join(
