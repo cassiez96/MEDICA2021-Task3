@@ -47,7 +47,7 @@ pip3 install https://download.pytorch.org/whl/cu100/torch-1.1.0-cp36-cp36m-linux
 ```
 
 ### Train nmtpytorch
-Run nmtpytorch with configuration file: `nmtpy train -C "/content/gdrive/My Drive/nmtpytorch/mmt-task-fd-impr-encdecinit.conf"`
+Run nmtpytorch with configuration file: `nmtpy train -C mmt-task-fd-impr-encdecinit.conf`
 
 
 
