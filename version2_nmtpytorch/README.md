@@ -24,7 +24,7 @@ nmtpy-install-extra
 <b>Create vocab</b><br/>
 
 ```
-nmtpy_dir=preprocessing/out_nmtpytorch
+nmtpy_dir=preprocessing/out_nmtpytorch/one_image
 for file in train.findings.tok train.impression.tok  train.bg_and_findings.tok
 do
     nmtpy-build-vocab -o ${nmtpy_dir} ${nmtpy_dir}/${file}

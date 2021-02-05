@@ -7,7 +7,7 @@ if not os.path.isdir(os.path.join(DEFAULT_MODEL_DIR, 'en_ewt_models/')):
 import json
 from tqdm import tqdm
 
-JSON_DIR = 'json'
+JSON_DIR = '.'
 
 
 class Tokenizer:
