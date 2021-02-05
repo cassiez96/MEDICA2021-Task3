@@ -4,16 +4,16 @@
 
 #### Download
 Go here : https://drive.google.com/drive/u/1/folders/1zqu7i3Pm2A4kcdeLO9d1TXQYG8UaAbnQ <br/>
-Download train, dev and indiana_dev.json<br/>
-Download indiana_images.zip, put it in "indiana_images" folder<br/>
-Put mimic-cxr images in "images" folder<br/>
+Download indiana-views.json and mimic-views.json and put it in data folder<br/>
+Download indiana_images.zip, put it in "data/indiana_images" folder<br/>
+Put mimic-cxr images in "data/mimic-cxr-images" folder<br/>
 
-#### tokenize
+#### Make training files
 Run:<br/>
-`python preprocess.py`<br/>
+`python one_image.py`<br/>
 This script split sections and tokenize input files <br/>
-Files are created in out_nmtpytorch folder (or here https://drive.google.com/drive/u/1/folders/1ATUSX3o9vhgQuHOe18WgRobftOyz3zu0)
-
+One image just take one image per report. <br/> Feel free to make other version.
+Files are created in out_nmtpytorch/one_image/ in this example
 
 ### nmtpytorch folder
 <b>On google colab do </b><br/>
@@ -32,6 +32,6 @@ done
 ```
 
 <b>Train nmtpytorch</b><br/>
-Run nmtpytorch with configuration file: `nmtpy train -C baseline_avgpool.conf`
+Run nmtpytorch with configuration file: `nmtpy train -C baseline_mono.conf`
 
 
