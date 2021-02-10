@@ -33,5 +33,3 @@ done
 
 <b>Train nmtpytorch</b><br/>
 Run nmtpytorch with configuration file: `nmtpy train -C baseline_mono.conf`
-
-

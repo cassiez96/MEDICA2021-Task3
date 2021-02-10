@@ -1,12 +1,5 @@
-import argparse
 import json
 import os
-from PIL import Image
-from torchvision.models import resnet50
-from torchvision.models._utils import IntermediateLayerGetter
-from torchvision import transforms
-import torch
-import numpy as np
 from tqdm import tqdm
 import glob
 
@@ -17,7 +10,7 @@ MIMIC_IMAGES_DIR = os.path.join(DATA_DIR, 'mimic-cxr-images')
 MIMIC_VIEWS = os.path.join(DATA_DIR, 'mimic-views.json')
 INDIANA_IMAGES_DIR = os.path.join(DATA_DIR, 'indiana-images')
 INDIANA_VIEWS = os.path.join(DATA_DIR, 'indiana-views.json')
-OUTPUT_DIR = os.path.join(OUT, 'one_image')
+OUTPUT_DIR = os.path.join(OUT, 'avgpool_oneimage')
 
 
 class Indiana:
@@ -42,7 +35,7 @@ def load_images_mimic(subject_id, study_id):
     #              'LAO', 'XTABLE LATERAL', 'AP LLD', 'LPO', '']:
 
     def iterate(images):
-        for view in ['PA', 'LATERAL', 'AP', 'LL', '', 'AP AXIAL']:
+        for view in ['PA', 'LATERAL', 'AP', 'AP AXIAL', 'LL', '']:
             for im in images:
                 if Mimic.views[im] == view:
                     return os.path.join(d, im + '.jpg')
@@ -98,12 +91,12 @@ if __name__ == "__main__":
             if 'indiana' in split:
                 image_for_report = load_images_indiana(study_id)
                 if image_for_report is None:
-                    image_for_report = ''  # happens around ~50 times we have no image
+                    image_for_report = 'no image'
             else:
                 image_for_report = load_images_mimic(subject_id, study_id)
 
             write_to_file(f_image_path, image_for_report, replicate=1)
             write_to_file(f_findings, findings, replicate=1)
-            write_to_file(f_bg_findings, f"BACKGROUND: {bg} FINDINGS: {findings}", replicate=1)
+            write_to_file(f_bg_findings, f"background {bg} findings {findings}", replicate=1)
             write_to_file(f_impression, impression, replicate=1)
             write_to_file(f_ids, f"{study_id} {subject_id}", replicate=1)
