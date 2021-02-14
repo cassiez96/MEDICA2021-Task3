@@ -5,6 +5,8 @@ This trainer is based on huggingface transformer. It finetunes pretrained BlueBE
 ## Preprocess data
 Preprocess data [the same way as in version one](https://github.com/cassiez96/MEDICA2021-Task3/tree/main/version1#step-2-tokenize-the-data-and-generate-histograms). Place the result files in `DATASET` directory and change the files' extension from `jsonl` to `json`.
 
+The processed data can also be found in google drive: https://drive.google.com/drive/folders/1G9RzWbSxjBfne6gaMeHKu3uI7QjCVDG5?usp=sharing
+
 ## Install required packages
 ```
 pip install git+https://github.com/huggingface/transformers
