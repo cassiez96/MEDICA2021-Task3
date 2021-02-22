@@ -52,22 +52,23 @@ arg_to_scheduler = {
 }
 
 
-class Seq2SeqTrainer(Trainer):
+class Seq2SeqEncoderDecoderTrainer(Trainer):
     def __init__(self, config=None, data_args=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         if config is None:
             assert isinstance(
                 self.model, PreTrainedModel
             ), f"If no `config` is passed the model to be trained has to be of type `PreTrainedModel`, but is {self.model.__class__}"
+            logger.warn("Using trainer using model config")
             self.config = self.model.config
+            self.config.pad_token_id = self.model.config.decoder.pad_token_id
         else:
             self.config = config
 
         self.data_args = data_args
         self.vocab_size = self.config.tgt_vocab_size if isinstance(self.config, FSMTConfig) else self.config.vocab_size
 
-        if self.args.label_smoothing != 0 or (self.data_args is not None and self.data_args.ignore_pad_token_for_loss):
+        if (self.args.label_smoothing_factor != 0) or (self.data_args is not None and self.data_args.ignore_pad_token_for_loss):
             assert (
                 self.config.pad_token_id is not None
             ), "Make sure that `config.pad_token_id` is correcly defined when ignoring `pad_token` for loss calculation or doing label smoothing."
@@ -77,7 +78,7 @@ class Seq2SeqTrainer(Trainer):
                 f"The `config.pad_token_id` is `None`. Using `config.eos_token_id` = {self.config.eos_token_id} for padding.."
             )
 
-        if self.args.label_smoothing == 0:
+        if self.args.label_smoothing_factor == 0:
             self.loss_fn = torch.nn.CrossEntropyLoss(ignore_index=self.config.pad_token_id)
         else:
             # dynamically import label_smoothed_nll_loss
@@ -130,10 +131,11 @@ class Seq2SeqTrainer(Trainer):
             logger.warn("scheduler is passed to `Seq2SeqTrainer`, `--lr_scheduler` arg is ignored.")
 
     def _get_lr_scheduler(self, num_training_steps):
-        schedule_func = arg_to_scheduler[self.args.lr_scheduler]
-        if self.args.lr_scheduler == "constant":
+        lr_scheduler = self.args.lr_scheduler_type.value
+        schedule_func = arg_to_scheduler[lr_scheduler]
+        if lr_scheduler == "constant":
             scheduler = schedule_func(self.optimizer)
-        elif self.args.lr_scheduler == "constant_w_warmup":
+        elif lr_scheduler == "constant_w_warmup":
             scheduler = schedule_func(self.optimizer, num_warmup_steps=self.args.warmup_steps)
         else:
             scheduler = schedule_func(
@@ -160,19 +162,19 @@ class Seq2SeqTrainer(Trainer):
             )
 
     def _compute_loss(self, model, inputs, labels):
-        if self.args.label_smoothing == 0:
+        if self.args.label_smoothing_factor == 0:
             if self.data_args is not None and self.data_args.ignore_pad_token_for_loss:
                 # force training to ignore pad token
                 logits = model(**inputs, use_cache=False)[0]
                 loss = self.loss_fn(logits.view(-1, logits.shape[-1]), labels.view(-1))
             else:
                 # compute usual loss via models
-                loss, logits = model(**inputs, labels=labels, use_cache=False)[:2]
+                loss, logits = model(**inputs, decoder_input_ids=labels, labels=labels, use_cache=False)[:2]
         else:
             # compute label smoothed loss
             logits = model(**inputs, use_cache=False)[0]
             lprobs = torch.nn.functional.log_softmax(logits, dim=-1)
-            loss, _ = self.loss_fn(lprobs, labels, self.args.label_smoothing, ignore_index=self.config.pad_token_id)
+            loss, _ = self.loss_fn(lprobs, labels, self.args.label_smoothing_factor, ignore_index=self.config.pad_token_id)
         return loss, logits
 
     def compute_loss(self, model, inputs):

@@ -46,7 +46,8 @@ from transformers import (
     BertGenerationDecoder,
     EncoderDecoderModel,
     PretrainedConfig,
-    EncoderDecoderConfig
+    EncoderDecoderConfig,
+    trainer_utils
 )
 from transformers.trainer_utils import get_last_checkpoint, is_main_process
 from seq2seq_encoder_decoder_trainer import Seq2SeqEncoderDecoderTrainer
@@ -531,8 +532,13 @@ def main():
         return result
 
     model.config.vocab_size = tokenizer.vocab_size
+    model.config.pad_token_id = model.config.decoder.pad_token_id
     # Initialize our Trainer
     training_args.save_total_limit = 5
+    training_args.load_best_model_at_end = True
+    training_args.metric_for_best_model = 'rouge'
+    training_args.greater_is_better = True
+    training_args.evaluation_strategy = trainer_utils.EvaluationStrategy.STEPS
     trainer = Seq2SeqEncoderDecoderTrainer(
         model=model,
         args=training_args,
